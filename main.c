@@ -4,22 +4,29 @@
 
 int main(void){
   printf("Hello Hash Table\n");
-  struct HashTable hasht = init_hashtable();
-  int arr[10] = {0};
-  arr[3] = 69;
-  insert(&hasht, "Test", arr, 10*sizeof(int));
-  
-  struct KeyValuePair *test = get(&hasht, "Test");
+  struct HashTable *hasht = init_hashtable();
 
-  printf("key: %s, values:\n", test->key);
-  for(int i=0;i<10;i++){
-    printf("%i ", ((int *)test->value)[i]);
+  // Insertion
+  for(int i=0;i<240;i++){
+    char str[25];
+    snprintf(str, 25, "t%d\0", i);
+    int a = 69;
+
+    printf("iteration %d\n",i);
+    bool t = insert(hasht, str, &a, sizeof(a));
+    if(!t) break;
   }
-  printf("\n");
-  
-  int a = 420;
-  insert(&hasht, "Test", &a, sizeof(int));
-  test = get(&hasht, "Test");
-  printf("key: %s, value: %d\n", test->key, *((int*)(test->value)));
+
+  // Retrieval
+  struct KeyValuePair *kvp;
+  for(int i=0;i<240;i++){
+    char str[25];
+    snprintf(str, 25, "t%d\0", i);
+    kvp = get(hasht,str);
+    // dump info
+    printf("key: %s; value: %d\n",kvp->key, *((int*)(kvp->value)));
+  }
+
+  free_hashtable(hasht);
   return 0;
 }
