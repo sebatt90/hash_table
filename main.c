@@ -7,26 +7,25 @@ int main(void){
   struct HashTable *hasht = init_hashtable();
 
   // Insertion
-  for(int i=0;i<240;i++){
+  for(int i=0;i<10000;i++){
     char str[25];
-    snprintf(str, 25, "t%d\0", i);
-    int a = 69;
+    snprintf(str, 25, "t%d", i);
 
     printf("iteration %d\n",i);
-    bool t = insert(hasht, str, &a, sizeof(a));
+    bool t = insert(hasht, str, &i, sizeof(int));
     if(!t) break;
   }
 
   // Retrieval
   struct KeyValuePair *kvp;
-  for(int i=0;i<240;i++){
+  for(int i=0;i<10000;i++){
     char str[25];
-    snprintf(str, 25, "t%d\0", i);
+    snprintf(str, 25, "t%d", i);
     kvp = get(hasht,str);
+    if(kvp == NULL) continue;
     // dump info
     printf("key: %s; value: %d\n",kvp->key, *((int*)(kvp->value)));
   }
-
   free_hashtable(hasht);
   return 0;
 }

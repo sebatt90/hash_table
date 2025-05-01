@@ -4,7 +4,7 @@
 #include<stdio.h>
 #include "hash_table.h"
 
-
+static bool _insert(struct KeyValuePair **kvp_arr, size_t table_size, struct KeyValuePair *kvp, size_t h);
 void free_hasharray(struct KeyValuePair **kvp_arr, size_t size);
 void free_hasharray_rehash(struct KeyValuePair **kvp_arr, size_t size);
 
@@ -35,20 +35,45 @@ static void rehash(struct HashTable *ht){
     // rehash thing...
     struct KeyValuePair *kvp = (struct KeyValuePair*)malloc(sizeof(struct KeyValuePair));
     memcpy(kvp, ht->hash_map[i], sizeof(struct KeyValuePair));
-    new_hash[hash(ht, ht->hash_map[i]->key)] = kvp;
+    // also handle collisions
+    //new_hAsh[hash(ht, ht->hash_map[i]->key)] = kvp;
+    size_t h = hash(ht, ht->hash_map[i]->key);
+    _insert(new_hash, ht->table_size, kvp, h);
+    free(ht->hash_map[i]);
   }
 
   // free old hash map
-  free_hasharray_rehash(ht->hash_map, old_table_size);
+  //free_hasharray_rehash(ht->hash_map, old_table_size);
+  free(ht->hash_map);
   ht->hash_map = new_hash;
 }
 
+static bool _insert(struct KeyValuePair **kvp_arr, size_t table_size, struct KeyValuePair *kvp, size_t h){
+
+  // handle insertion
+  bool ins = false;
+  for(size_t i=h; i<table_size+h;i++){
+    if(kvp_arr[i%table_size]==NULL){
+      ins = true;
+      kvp_arr[i%table_size] = kvp;
+      break;
+    } else if(strcmp(kvp_arr[i%table_size]->key, kvp->key)==0){
+      free(kvp_arr[i%table_size]);
+      ins = true;
+      kvp_arr[i%table_size] = kvp;
+      break;
+    }
+  }
+
+  if(!ins) free(kvp);
+  return ins;
+}
 
 bool insert(struct HashTable *ht, char* key, void* value, size_t buf_size){
   float load_factor = (float)ht->n/(float)ht->table_size;
   if(load_factor >= 0.6f){
     rehash(ht);
-    printf("Rehash! New table size is: %d\n", ht->table_size);
+    printf("Rehash! New table size is: %lu\n", ht->table_size);
   }
   // create keyvaluepair struct
   struct KeyValuePair *kvp = malloc(sizeof(struct KeyValuePair));
@@ -58,36 +83,20 @@ bool insert(struct HashTable *ht, char* key, void* value, size_t buf_size){
   // clone value buffer
   kvp->value = malloc(buf_size);
   memcpy(kvp->value, value, buf_size);
-
-  // handle insertion
-  size_t h = hash(ht, key);
-
-  bool ins = false;
-  for(size_t i=h; i<ht->table_size;i++){
-    if(ht->hash_map[i]==NULL){
-      ins = true;
-      ht->n++;
-      ht->hash_map[i] = kvp;
-      break;
-    } else if(strcmp(ht->hash_map[i]->key, key)==0){
-      free(ht->hash_map[i]);
-      ins = true;
-      ht->n++;
-      ht->hash_map[i] = kvp;
-      break;
-    }
+  if(_insert(ht->hash_map, ht->table_size, kvp, hash(ht,key))){
+    ht->n++;
+    return true;
   }
-
-  return ins;
+  return false;
 }
 
 struct KeyValuePair *get(struct HashTable *ht, char *key) {
   size_t h = hash(ht,key);
-  for(size_t i=h; i<ht->table_size;i++){
-    if(ht->hash_map[i]==NULL) continue;
+  for(size_t i=h; i<ht->table_size+h;i++){
+    if(ht->hash_map[i%ht->table_size]==NULL) continue;
 
-    if(strcmp(ht->hash_map[i]->key, key)==0){
-      return ht->hash_map[i];
+    if(strcmp(ht->hash_map[i%ht->table_size]->key, key)==0){
+      return ht->hash_map[i%ht->table_size];
     }
   }
   return NULL;
