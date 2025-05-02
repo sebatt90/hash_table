@@ -2,6 +2,21 @@
 #include<stdlib.h>
 #include "hash_table.h"
 
+void get_elements(struct HashTable *hasht){
+  struct KeyValuePair *kvp;
+  for(int i=0;i<10000;i++){
+    char str[25];
+    snprintf(str, 25, "t%d", i);
+    kvp = get(hasht,str);
+    if(kvp == NULL){
+      printf("NULL DETECTED\n");
+      continue;
+    }
+    // dump info
+    printf("key: %s; value: %d\n",kvp->key, *((int*)(kvp->value)));
+  }
+}
+
 int main(void){
   printf("Hello Hash Table\n");
   struct HashTable *hasht = init_hashtable();
@@ -17,18 +32,23 @@ int main(void){
   }
 
   // Retrieval
-  struct KeyValuePair *kvp;
+  get_elements(hasht);
+  /*
+  // Deletion
   for(int i=0;i<10000;i++){
     char str[25];
     snprintf(str, 25, "t%d", i);
-    kvp = get(hasht,str);
-    if(kvp == NULL){
-      printf("NULL DETECTED\n");
+    bool deleted = get(hasht,str);
+    if(deleted == false){
+      printf("Element not found\n");
       continue;
     }
     // dump info
-    printf("key: %s; value: %d\n",kvp->key, *((int*)(kvp->value)));
+    printf("Deleted!\n");
   }
+  printf("Trying to retrieve elements again \n");
+  get_elements(hasht);
+  */
   free_hashtable(hasht);
   return 0;
 }

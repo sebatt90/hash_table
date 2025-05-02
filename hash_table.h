@@ -20,5 +20,6 @@ struct HashTable *init_hashtable();
 bool insert(struct HashTable *ht, char* key, void* value, size_t buf_size);
 struct KeyValuePair *get(struct HashTable *ht, char *key);
 void free_hashtable(struct HashTable *ht);
+bool delete(struct HashTable *ht, char *key);
 
 #endif

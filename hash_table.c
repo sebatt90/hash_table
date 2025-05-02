@@ -43,7 +43,6 @@ static void rehash(struct HashTable *ht){
   }
 
   // free old hash map
-  //free_hasharray_rehash(ht->hash_map, old_table_size);
   free(ht->hash_map);
   ht->hash_map = new_hash;
 }
@@ -99,6 +98,36 @@ struct KeyValuePair *get(struct HashTable *ht, char *key) {
     }
   }
   return NULL;
+}
+
+bool delete(struct HashTable *ht, char *key) {
+  bool found=false;
+  size_t h = hash(ht,key);
+  size_t d_id;
+  for(size_t i=h; i<ht->table_size+h;i++){
+    size_t j = i%ht->table_size;
+    if(ht->hash_map[j]==NULL) return false;
+
+    if(strcmp(ht->hash_map[j]->key, key)==0){
+      found = true;
+      d_id = j;
+      free(ht->hash_map[d_id]->key);
+      free(ht->hash_map[d_id]->value);
+      free(ht->hash_map[d_id]);
+      ht->hash_map[d_id] = NULL;
+      ht->n--;
+      continue;
+    }
+
+    if(found) {
+      h = hash(ht,ht->hash_map[j]->key);
+      if(h <= d_id) {
+	ht->hash_map[d_id] = ht->hash_map[j];
+	ht->hash_map[j] = NULL;
+      }
+    }
+  }
+  return true;
 }
 
 void free_hasharray(struct KeyValuePair **kvp_arr, size_t size){
