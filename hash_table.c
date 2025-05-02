@@ -6,7 +6,6 @@
 
 static bool _insert(struct KeyValuePair **kvp_arr, size_t table_size, struct KeyValuePair *kvp, size_t h);
 void free_hasharray(struct KeyValuePair **kvp_arr, size_t size);
-void free_hasharray_rehash(struct KeyValuePair **kvp_arr, size_t size);
 
 struct HashTable *init_hashtable(){
   struct HashTable *ht = (struct HashTable *) malloc(sizeof(struct HashTable));
@@ -92,6 +91,7 @@ struct KeyValuePair *get(struct HashTable *ht, char *key) {
   size_t h = hash(ht,key);
   for(size_t i=h; i<ht->table_size+h;i++){
     if(ht->hash_map[i%ht->table_size]==NULL) return NULL;
+    if(ht->hash_map[i%ht->table_size]==(struct KeyValuePair *)-1) continue;
 
     if(strcmp(ht->hash_map[i%ht->table_size]->key, key)==0){
       return ht->hash_map[i%ht->table_size];
@@ -101,31 +101,19 @@ struct KeyValuePair *get(struct HashTable *ht, char *key) {
 }
 
 bool delete(struct HashTable *ht, char *key) {
-  bool found=false;
   size_t h = hash(ht,key);
-  size_t d_id;
   for(size_t i=h; i<ht->table_size+h;i++){
     size_t j = i%ht->table_size;
     if(ht->hash_map[j]==NULL) return false;
+    if(ht->hash_map[i%ht->table_size]==(struct KeyValuePair *)-1) continue;
+    if(strcmp(ht->hash_map[j]->key, key)) continue;
 
-    if(strcmp(ht->hash_map[j]->key, key)==0){
-      found = true;
-      d_id = j;
-      free(ht->hash_map[d_id]->key);
-      free(ht->hash_map[d_id]->value);
-      free(ht->hash_map[d_id]);
-      ht->hash_map[d_id] = NULL;
-      ht->n--;
-      continue;
-    }
-
-    if(found) {
-      h = hash(ht,ht->hash_map[j]->key);
-      if(h <= d_id) {
-	ht->hash_map[d_id] = ht->hash_map[j];
-	ht->hash_map[j] = NULL;
-      }
-    }
+    free(ht->hash_map[j]->key);
+    free(ht->hash_map[j]->value);
+    free(ht->hash_map[j]);
+    ht->hash_map[j] = (struct KeyValuePair *)-1;
+    ht->n--;
+    break;
   }
   return true;
 }
@@ -133,17 +121,9 @@ bool delete(struct HashTable *ht, char *key) {
 void free_hasharray(struct KeyValuePair **kvp_arr, size_t size){
   for(size_t i=0;i<size;i++){
     if(kvp_arr[i]==NULL) continue;
+    if(kvp_arr[i]=(struct KeyValuePair *)-1) continue;
     free(kvp_arr[i]->key);
     free(kvp_arr[i]->value);
-    free(kvp_arr[i]);
-  }
-    
-  free(kvp_arr);
-}
-
-void free_hasharray_rehash(struct KeyValuePair **kvp_arr, size_t size){
-  for(size_t i=0;i<size;i++){
-    if(kvp_arr[i]==NULL) continue;
     free(kvp_arr[i]);
   }
     

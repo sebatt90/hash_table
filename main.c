@@ -3,13 +3,13 @@
 #include "hash_table.h"
 
 void get_elements(struct HashTable *hasht){
+  printf("Retrieving items\n");
   struct KeyValuePair *kvp;
   for(int i=0;i<10000;i++){
     char str[25];
     snprintf(str, 25, "t%d", i);
     kvp = get(hasht,str);
     if(kvp == NULL){
-      printf("NULL DETECTED\n");
       continue;
     }
     // dump info
