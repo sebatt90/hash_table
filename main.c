@@ -33,12 +33,11 @@ int main(void){
 
   // Retrieval
   get_elements(hasht);
-  /*
   // Deletion
   for(int i=0;i<10000;i++){
     char str[25];
     snprintf(str, 25, "t%d", i);
-    bool deleted = get(hasht,str);
+    bool deleted = delete(hasht,str);
     if(deleted == false){
       printf("Element not found\n");
       continue;
@@ -48,7 +47,7 @@ int main(void){
   }
   printf("Trying to retrieve elements again \n");
   get_elements(hasht);
-  */
+  
   free_hashtable(hasht);
   return 0;
 }
