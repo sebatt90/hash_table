@@ -22,7 +22,10 @@ int main(void){
     char str[25];
     snprintf(str, 25, "t%d", i);
     kvp = get(hasht,str);
-    if(kvp == NULL) continue;
+    if(kvp == NULL){
+      printf("NULL DETECTED\n");
+      continue;
+    }
     // dump info
     printf("key: %s; value: %d\n",kvp->key, *((int*)(kvp->value)));
   }

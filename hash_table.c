@@ -73,7 +73,6 @@ bool insert(struct HashTable *ht, char* key, void* value, size_t buf_size){
   float load_factor = (float)ht->n/(float)ht->table_size;
   if(load_factor >= 0.6f){
     rehash(ht);
-    printf("Rehash! New table size is: %lu\n", ht->table_size);
   }
   // create keyvaluepair struct
   struct KeyValuePair *kvp = malloc(sizeof(struct KeyValuePair));
@@ -93,7 +92,7 @@ bool insert(struct HashTable *ht, char* key, void* value, size_t buf_size){
 struct KeyValuePair *get(struct HashTable *ht, char *key) {
   size_t h = hash(ht,key);
   for(size_t i=h; i<ht->table_size+h;i++){
-    if(ht->hash_map[i%ht->table_size]==NULL) continue;
+    if(ht->hash_map[i%ht->table_size]==NULL) return NULL;
 
     if(strcmp(ht->hash_map[i%ht->table_size]->key, key)==0){
       return ht->hash_map[i%ht->table_size];
