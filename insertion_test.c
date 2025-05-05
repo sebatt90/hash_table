@@ -1,5 +1,4 @@
-#include<stdio.h>
-#include<stdlib.h>
+#include <stdio.h>
 #include "hash_table.h"
 
 int main(void){
@@ -12,7 +11,7 @@ int main(void){
     bool t = insert(hasht, str, &i, sizeof(int));
     if(!t) break;
   }
-  
+
   free_hashtable(hasht);
   return 0;
 }

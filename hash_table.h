@@ -1,7 +1,8 @@
 #ifndef HASH_TABLE_H
 
 #define HASH_TABLE_H
-#include<stdbool.h>
+#include <stdbool.h>
+#include <stddef.h>
 
 #define HASH_TABLE_SIZE 16
 

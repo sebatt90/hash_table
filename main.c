@@ -1,5 +1,4 @@
-#include<stdio.h>
-#include<stdlib.h>
+#include <stdio.h>
 #include "hash_table.h"
 
 void get_elements(struct HashTable *hasht){
@@ -47,7 +46,7 @@ int main(void){
   }
   printf("Trying to retrieve elements again \n");
   get_elements(hasht);
-  
+
   free_hashtable(hasht);
   return 0;
 }

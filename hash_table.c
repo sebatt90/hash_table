@@ -1,7 +1,7 @@
 // hash table def
-#include<stdlib.h>
-#include<string.h>
-#include<stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
 #include "hash_table.h"
 
 static bool _insert(struct KeyValuePair **kvp_arr, size_t table_size, struct KeyValuePair *kvp, size_t h);
@@ -121,12 +121,12 @@ bool delete(struct HashTable *ht, char *key) {
 void free_hasharray(struct KeyValuePair **kvp_arr, size_t size){
   for(size_t i=0;i<size;i++){
     if(kvp_arr[i]==NULL) continue;
-    if(kvp_arr[i]=(struct KeyValuePair *)-1) continue;
+    if(kvp_arr[i]==(struct KeyValuePair *)-1) continue;
     free(kvp_arr[i]->key);
     free(kvp_arr[i]->value);
     free(kvp_arr[i]);
   }
-    
+
   free(kvp_arr);
 }
 
