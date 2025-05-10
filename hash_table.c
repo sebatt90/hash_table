@@ -4,10 +4,10 @@
 #include <stdio.h>
 #include "hash_table.h"
 
-static bool _insert(struct KeyValuePair **kvp_arr, size_t table_size, struct KeyValuePair *kvp, size_t h);
-void free_hasharray(struct KeyValuePair **kvp_arr, size_t size);
+static bool __insert(struct KeyValuePair **kvp_arr, size_t table_size, struct KeyValuePair *kvp, size_t h);
+static void free_hasharray(struct KeyValuePair **kvp_arr, size_t size);
 
-struct HashTable *init_hashtable(){
+struct HashTable *hashtable_init(){
   struct HashTable *ht = (struct HashTable *) malloc(sizeof(struct HashTable));
   ht->table_size = HASH_TABLE_SIZE;
   ht->hash_map = calloc(ht->table_size, sizeof(struct KeyValuePair));
@@ -37,7 +37,7 @@ static void rehash(struct HashTable *ht){
     // also handle collisions
     //new_hAsh[hash(ht, ht->hash_map[i]->key)] = kvp;
     size_t h = hash(ht, ht->hash_map[i]->key);
-    _insert(new_hash, ht->table_size, kvp, h);
+    __insert(new_hash, ht->table_size, kvp, h);
     free(ht->hash_map[i]);
   }
 
@@ -46,7 +46,7 @@ static void rehash(struct HashTable *ht){
   ht->hash_map = new_hash;
 }
 
-static bool _insert(struct KeyValuePair **kvp_arr, size_t table_size, struct KeyValuePair *kvp, size_t h){
+static bool __insert(struct KeyValuePair **kvp_arr, size_t table_size, struct KeyValuePair *kvp, size_t h){
 
   // handle insertion
   bool ins = false;
@@ -67,7 +67,7 @@ static bool _insert(struct KeyValuePair **kvp_arr, size_t table_size, struct Key
   return ins;
 }
 
-bool insert(struct HashTable *ht, char* key, void* value, size_t buf_size){
+bool hashtable_insert(struct HashTable *ht, char* key, void* value, size_t buf_size){
   float load_factor = (float)ht->n/(float)ht->table_size;
   if(load_factor >= 0.6f){
     rehash(ht);
@@ -80,14 +80,14 @@ bool insert(struct HashTable *ht, char* key, void* value, size_t buf_size){
   // clone value buffer
   kvp->value = malloc(buf_size);
   memcpy(kvp->value, value, buf_size);
-  if(_insert(ht->hash_map, ht->table_size, kvp, hash(ht,key))){
+  if(__insert(ht->hash_map, ht->table_size, kvp, hash(ht,key))){
     ht->n++;
     return true;
   }
   return false;
 }
 
-struct KeyValuePair *get(struct HashTable *ht, char *key) {
+struct KeyValuePair *hashtable_get(struct HashTable *ht, char *key) {
   size_t h = hash(ht,key);
   for(size_t i=h; i<ht->table_size+h;i++){
     if(ht->hash_map[i%ht->table_size]==NULL) return NULL;
@@ -100,7 +100,7 @@ struct KeyValuePair *get(struct HashTable *ht, char *key) {
   return NULL;
 }
 
-bool delete(struct HashTable *ht, char *key) {
+bool hashtable_delete(struct HashTable *ht, char *key) {
   size_t h = hash(ht,key);
   for(size_t i=h; i<ht->table_size+h;i++){
     size_t j = i%ht->table_size;
@@ -118,7 +118,7 @@ bool delete(struct HashTable *ht, char *key) {
   return true;
 }
 
-void free_hasharray(struct KeyValuePair **kvp_arr, size_t size){
+static void free_hasharray(struct KeyValuePair **kvp_arr, size_t size){
   for(size_t i=0;i<size;i++){
     if(kvp_arr[i]==NULL) continue;
     if(kvp_arr[i]==(struct KeyValuePair *)-1) continue;
@@ -130,7 +130,7 @@ void free_hasharray(struct KeyValuePair **kvp_arr, size_t size){
   free(kvp_arr);
 }
 
-void free_hashtable(struct HashTable *ht){
+void hashtable_free(struct HashTable *ht){
   free_hasharray(ht->hash_map, ht->table_size);
   free(ht);
 }

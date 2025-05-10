@@ -17,10 +17,10 @@ struct HashTable {
   size_t n;
 };
 
-struct HashTable *init_hashtable();
-bool insert(struct HashTable *ht, char* key, void* value, size_t buf_size);
-struct KeyValuePair *get(struct HashTable *ht, char *key);
-void free_hashtable(struct HashTable *ht);
-bool delete(struct HashTable *ht, char *key);
+struct HashTable *hashtable_init();
+bool hashtable_insert(struct HashTable *ht, char* key, void* value, size_t buf_size);
+struct KeyValuePair *hashtable_get(struct HashTable *ht, char *key);
+void hashtable_free(struct HashTable *ht);
+bool hashtable_delete(struct HashTable *ht, char *key);
 
 #endif

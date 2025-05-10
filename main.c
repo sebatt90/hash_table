@@ -7,7 +7,7 @@ void get_elements(struct HashTable *hasht){
   for(int i=0;i<10000;i++){
     char str[25];
     snprintf(str, 25, "t%d", i);
-    kvp = get(hasht,str);
+    kvp = hashtable_get(hasht,str);
     if(kvp == NULL){
       continue;
     }
@@ -18,7 +18,7 @@ void get_elements(struct HashTable *hasht){
 
 int main(void){
   printf("Hello Hash Table\n");
-  struct HashTable *hasht = init_hashtable();
+  struct HashTable *hasht = hashtable_init();
 
   // Insertion
   for(int i=0;i<10000;i++){
@@ -26,7 +26,7 @@ int main(void){
     snprintf(str, 25, "t%d", i);
 
     printf("iteration %d\n",i);
-    bool t = insert(hasht, str, &i, sizeof(int));
+    bool t = hashtable_insert(hasht, str, &i, sizeof(int));
     if(!t) break;
   }
 
@@ -36,17 +36,18 @@ int main(void){
   for(int i=0;i<10000;i++){
     char str[25];
     snprintf(str, 25, "t%d", i);
-    bool deleted = delete(hasht,str);
-    if(deleted == false){
-      printf("Element not found\n");
-      continue;
+
+    if(i%2==0){
+	bool deleted = hashtable_delete(hasht,str);
+	if(deleted == false){
+	    printf("Element not found\n");
+	    continue;
+	}
     }
-    // dump info
-    printf("Deleted!\n");
   }
   printf("Trying to retrieve elements again \n");
   get_elements(hasht);
 
-  free_hashtable(hasht);
+  hashtable_free(hasht);
   return 0;
 }
