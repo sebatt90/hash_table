@@ -19,6 +19,9 @@ struct HashTable *hashtable_init(){
   return ht;
 }
 
+#ifdef FNV_HASH
+#include "fnv.c"
+#else
 static size_t hash(struct HashTable *ht, char *key){
   size_t t=0;
   for(size_t i=0;i<strlen(key);i++){
@@ -26,7 +29,7 @@ static size_t hash(struct HashTable *ht, char *key){
   }
   return t & (ht->table_size-1);
 }
-
+#endif
 
 static void rehash(struct HashTable *ht){
   size_t old_table_size = ht->table_size;
