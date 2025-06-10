@@ -8,8 +8,7 @@ int main(void){
   for(int i=0;i<10000;i++){
     char str[25];
     snprintf(str, 25, "t%d", i);
-    bool t = hashtable_insert(hasht, str, &i, sizeof(int));
-    if(!t) break;
+    hashtable_insert(hasht, str, &i, sizeof(int));
   }
 
   hashtable_free(hasht);

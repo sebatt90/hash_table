@@ -4,8 +4,6 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-#define HASH_TABLE_SIZE 16
-
 struct KeyValuePair {
   char *key;
   void *value;
@@ -18,7 +16,7 @@ struct HashTable {
 };
 
 struct HashTable *hashtable_init();
-bool hashtable_insert(struct HashTable *ht, char* key, void* value, size_t buf_size);
+void hashtable_insert(struct HashTable *ht, char* key, void* value, size_t buf_size);
 struct KeyValuePair *hashtable_get(struct HashTable *ht, char *key);
 void hashtable_free(struct HashTable *ht);
 bool hashtable_delete(struct HashTable *ht, char *key);
